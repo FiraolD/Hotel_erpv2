@@ -5,13 +5,13 @@ import {
  updateOrderStatus
 } from "../controllers/orderController.js"
 
-import { authenticateToken } from "../middleware/authMiddleware.js"
+import { authenticateToken, optionalAuth } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
 router.get("/", authenticateToken, getOrders)
 
-router.post("/", authenticateToken, createOrder)
+router.post("/", optionalAuth, createOrder)
 
 router.put("/:id", authenticateToken, updateOrderStatus)
 
