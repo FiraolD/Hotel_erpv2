@@ -8,21 +8,22 @@ export default function BookingPage() {
 
  const [checkIn, setCheckIn] = useState("")
  const [checkOut, setCheckOut] = useState("")
+ const [receipt, setReceipt] = useState(null)
 
  const bookRoom = async () => {
+  if (!receipt) {
+   alert("Please attach your payment receipt before confirming.")
+   return
+  }
 
   await api.post("/reservations", {
-
    roomId: Number(id),
-
    checkIn,
-
-   checkOut
-
+   checkOut,
+   receiptFileName: receipt.name
   })
 
-  alert("Room booked successfully!")
-
+  alert("Reservation submitted successfully with receipt reference.")
  }
 
  return (
@@ -30,9 +31,7 @@ export default function BookingPage() {
   <div>
 
    <h1 className="text-2xl font-bold mb-4">
-
     Book Room
-
    </h1>
 
    <input
@@ -47,11 +46,21 @@ export default function BookingPage() {
     onChange={e => setCheckOut(e.target.value)}
    />
 
+   <label className="block mb-4">
+    <span className="block mb-1 text-sm font-medium">Attach payment receipt</span>
+    <input
+     type="file"
+     accept="image/*,.pdf"
+     className="border p-2 block w-full max-w-md"
+     onChange={(e) => setReceipt(e.target.files?.[0] || null)}
+    />
+   </label>
+
    <button
     onClick={bookRoom}
     className="bg-blue-600 text-white px-6 py-2 rounded"
    >
-    Confirm Booking
+    Confirm Reservation
    </button>
 
   </div>
