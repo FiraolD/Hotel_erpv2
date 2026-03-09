@@ -12,28 +12,6 @@ export default function BookingPage() {
  const [checkOut, setCheckOut] = useState("")
  const [receipt, setReceipt] = useState(null)
 
-<<<<<<< codex/fix-admin-and-customer-side-issues-i667gs
- const saveLocalReservation = () => {
-  const existing = JSON.parse(localStorage.getItem(LOCAL_RESERVATIONS_KEY) || "[]")
-  existing.push({
-   roomId: Number(id),
-   checkIn,
-   checkOut,
-   receiptFileName: receipt.name,
-   createdAt: new Date().toISOString(),
-   status: "pending"
-=======
-<<<<<<< codex/fix-admin-and-customer-side-issues-nvo8lk
- const saveLocalReservation = () => {
-  const existing = JSON.parse(localStorage.getItem(LOCAL_RESERVATIONS_KEY) || "[]")
-  existing.push({
-   roomId: Number(id),
-   checkIn,
-   checkOut,
-   receiptFileName: receipt.name,
-   createdAt: new Date().toISOString(),
-   status: "pending"
-=======
  const bookRoom = async () => {
   if (!receipt) {
    alert("Please attach your payment receipt before confirming.")
@@ -45,16 +23,12 @@ export default function BookingPage() {
    checkIn,
    checkOut,
    receiptFileName: receipt.name
->>>>>>> main
->>>>>>> main
+
   })
   localStorage.setItem(LOCAL_RESERVATIONS_KEY, JSON.stringify(existing))
  }
 
-<<<<<<< codex/fix-admin-and-customer-side-issues-i667gs
-=======
-<<<<<<< codex/fix-admin-and-customer-side-issues-nvo8lk
->>>>>>> main
+
  const bookRoom = async () => {
   if (!checkIn || !checkOut) {
    alert("Please select check-in and check-out dates.")
@@ -77,11 +51,7 @@ export default function BookingPage() {
    saveLocalReservation()
   }
 
-<<<<<<< codex/fix-admin-and-customer-side-issues-i667gs
-=======
-=======
->>>>>>> main
->>>>>>> main
+
   alert("Reservation submitted successfully with receipt reference.")
  }
 

@@ -12,10 +12,7 @@ export default function RestaurantPage() {
  useEffect(() => {
   api.get("/menu")
    .then(res => setMenu(res.data))
-<<<<<<< codex/fix-admin-and-customer-side-issues-i667gs
-=======
-<<<<<<< codex/fix-admin-and-customer-side-issues-nvo8lk
->>>>>>> main
+
    .catch(() => setMenu([]))
  }, [])
 
@@ -36,7 +33,6 @@ export default function RestaurantPage() {
 
   localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(existing))
  }
-<<<<<<< codex/fix-admin-and-customer-side-issues-i667gs
 
  const addToCart = async (item) => {
   try {
@@ -48,19 +44,6 @@ export default function RestaurantPage() {
    addToLocalCart(item)
   }
 
-=======
-
- const addToCart = async (item) => {
-  try {
-   await api.post("/cart", {
-    itemId: item.id,
-    quantity: 1
-   })
-  } catch {
-   addToLocalCart(item)
-  }
-
-=======
  }, [])
 
  const addToCart = async (item) => {
@@ -69,8 +52,7 @@ export default function RestaurantPage() {
    quantity: 1
   })
 
->>>>>>> main
->>>>>>> main
+
   alert(`${item.name} added to cart`)
  }
 
@@ -81,15 +63,8 @@ export default function RestaurantPage() {
     <button onClick={() => navigate("/hotel/checkout")} className="bg-blue-600 text-white px-4 py-2 rounded">Go to Checkout</button>
    </div>
 
-<<<<<<< codex/fix-admin-and-customer-side-issues-i667gs
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-=======
-<<<<<<< codex/fix-admin-and-customer-side-issues-nvo8lk
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-=======
    <div className="grid grid-cols-3 gap-4">
->>>>>>> main
->>>>>>> main
+
     {menu.map(item => (
      <button
       key={item.id}
