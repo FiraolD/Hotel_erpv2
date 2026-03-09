@@ -12,18 +12,22 @@ export default function BookingPage() {
  const [checkOut, setCheckOut] = useState("")
  const [receipt, setReceipt] = useState(null)
 
- const saveLocalReservation = () => {
-  const existing = JSON.parse(localStorage.getItem(LOCAL_RESERVATIONS_KEY) || "[]")
-  existing.push({
+ const bookRoom = async () => {
+  if (!receipt) {
+   alert("Please attach your payment receipt before confirming.")
+   return
+  }
+
+  await api.post("/reservations", {
    roomId: Number(id),
    checkIn,
    checkOut,
-   receiptFileName: receipt.name,
-   createdAt: new Date().toISOString(),
-   status: "pending"
+   receiptFileName: receipt.name
+
   })
   localStorage.setItem(LOCAL_RESERVATIONS_KEY, JSON.stringify(existing))
  }
+
 
  const bookRoom = async () => {
   if (!checkIn || !checkOut) {
@@ -46,6 +50,7 @@ export default function BookingPage() {
   } catch {
    saveLocalReservation()
   }
+
 
   alert("Reservation submitted successfully with receipt reference.")
  }
