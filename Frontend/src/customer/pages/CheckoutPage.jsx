@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react"
 import api from "../../api/api"
 
+const LOCAL_CART_KEY = "hotel_customer_cart"
+const LOCAL_ORDERS_KEY = "hotel_customer_orders"
+
 export default function CheckoutPage() {
  const [cart, setCart] = useState([])
  const [menuMap, setMenuMap] = useState({})
@@ -10,25 +13,67 @@ export default function CheckoutPage() {
  const [notes, setNotes] = useState("")
 
  useEffect(() => {
-  Promise.all([api.get("/cart"), api.get("/menu")]).then(([cartRes, menuRes]) => {
-   setCart(cartRes.data)
-   const mapped = menuRes.data.reduce((acc, item) => {
-    acc[item.id] = item
-    return acc
-   }, {})
-   setMenuMap(mapped)
-  })
+  Promise.all([api.get("/cart"), api.get("/menu")])
+   .then(([cartRes, menuRes]) => {
+    setCart(cartRes.data)
+    const mapped = menuRes.data.reduce((acc, item) => {
+     acc[item.id] = item
+     return acc
+    }, {})
+    setMenuMap(mapped)
+   })
+   .catch(async () => {
+    const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY) || "[]")
+    setCart(localCart)
+
+    try {
+     const menuRes = await api.get("/menu")
+     const mapped = menuRes.data.reduce((acc, item) => {
+      acc[item.id] = item
+      return acc
+     }, {})
+     setMenuMap(mapped)
+    } catch {
+     setMenuMap({})
+    }
+   })
  }, [])
 
  const total = useMemo(() => {
   return cart.reduce((sum, cartItem) => {
    const menuItem = menuMap[cartItem.itemId]
-   if (!menuItem) return sum
-   return sum + (menuItem.price * cartItem.quantity)
+   const price = typeof cartItem.price === "number" ? cartItem.price : menuItem?.price
+   if (typeof price !== "number") return sum
+   return sum + (price * cartItem.quantity)
   }, 0)
  }, [cart, menuMap])
 
+ const clearLocalCart = () => {
+  localStorage.setItem(LOCAL_CART_KEY, JSON.stringify([]))
+ }
+
+ const saveLocalOrder = () => {
+  const existing = JSON.parse(localStorage.getItem(LOCAL_ORDERS_KEY) || "[]")
+  existing.push({
+   id: Date.now(),
+   items: cart,
+   total,
+   fulfillmentType,
+   address,
+   pickupTime,
+   notes,
+   createdAt: new Date().toISOString(),
+   status: "pending"
+  })
+  localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(existing))
+ }
+
  const placeOrder = async () => {
+  if (!cart.length) {
+   alert("Your cart is empty")
+   return
+  }
+
   if (fulfillmentType === "delivery" && !address.trim()) {
    alert("Delivery address is required")
    return
@@ -39,14 +84,20 @@ export default function CheckoutPage() {
    return
   }
 
-  await api.post("/orders", {
-   total,
-   fulfillmentType,
-   address,
-   pickupTime,
-   notes
-  })
+  try {
+   await api.post("/orders", {
+    total,
+    fulfillmentType,
+    address,
+    pickupTime,
+    notes
+   })
+  } catch {
+   saveLocalOrder()
+  }
 
+  clearLocalCart()
+  setCart([])
   alert("Order placed successfully")
  }
 
@@ -58,10 +109,14 @@ export default function CheckoutPage() {
     <h2 className="text-lg font-semibold mb-2">Your Items</h2>
     {cart.map((item, index) => {
      const menuItem = menuMap[item.itemId]
+     const itemName = item.name || menuItem?.name || `Item #${item.itemId}`
+     const price = typeof item.price === "number" ? item.price : menuItem?.price
+     const lineTotal = typeof price === "number" ? (price * item.quantity).toFixed(2) : "0.00"
+
      return (
       <div key={`${item.itemId}-${index}`} className="flex justify-between border-b py-2">
-       <span>{menuItem?.name || `Item #${item.itemId}`} x {item.quantity}</span>
-       <span>${menuItem ? (menuItem.price * item.quantity).toFixed(2) : "0.00"}</span>
+       <span>{itemName} x {item.quantity}</span>
+       <span>${lineTotal}</span>
       </div>
      )
     })}

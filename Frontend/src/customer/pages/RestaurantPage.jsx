@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../../api/api"
 
+const LOCAL_CART_KEY = "hotel_customer_cart"
+
 export default function RestaurantPage() {
 
  const [menu, setMenu] = useState([])
@@ -10,6 +12,39 @@ export default function RestaurantPage() {
  useEffect(() => {
   api.get("/menu")
    .then(res => setMenu(res.data))
+<<<<<<< codex/fix-admin-and-customer-side-issues-nvo8lk
+   .catch(() => setMenu([]))
+ }, [])
+
+ const addToLocalCart = (item) => {
+  const existing = JSON.parse(localStorage.getItem(LOCAL_CART_KEY) || "[]")
+  const match = existing.find((cartItem) => cartItem.itemId === item.id)
+
+  if (match) {
+   match.quantity += 1
+  } else {
+   existing.push({
+    itemId: item.id,
+    quantity: 1,
+    name: item.name,
+    price: item.price
+   })
+  }
+
+  localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(existing))
+ }
+
+ const addToCart = async (item) => {
+  try {
+   await api.post("/cart", {
+    itemId: item.id,
+    quantity: 1
+   })
+  } catch {
+   addToLocalCart(item)
+  }
+
+=======
  }, [])
 
  const addToCart = async (item) => {
@@ -18,6 +53,7 @@ export default function RestaurantPage() {
    quantity: 1
   })
 
+>>>>>>> main
   alert(`${item.name} added to cart`)
  }
 
@@ -28,7 +64,11 @@ export default function RestaurantPage() {
     <button onClick={() => navigate("/hotel/checkout")} className="bg-blue-600 text-white px-4 py-2 rounded">Go to Checkout</button>
    </div>
 
+<<<<<<< codex/fix-admin-and-customer-side-issues-nvo8lk
+   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+=======
    <div className="grid grid-cols-3 gap-4">
+>>>>>>> main
     {menu.map(item => (
      <button
       key={item.id}
