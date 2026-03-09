@@ -1,11 +1,11 @@
 import express from "express"
 import { addToCart, getCart } from "../controllers/cartController.js"
-import { authenticateToken } from "../middleware/authMiddleware.js"
+import { optionalAuth } from "../middleware/authMiddleware.js"
 
 const router = express.Router()
 
-router.get("/", authenticateToken, getCart)
+router.get("/", optionalAuth, getCart)
 
-router.post("/", authenticateToken, addToCart)
+router.post("/", optionalAuth, addToCart)
 
 export default router
