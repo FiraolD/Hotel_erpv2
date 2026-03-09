@@ -12,6 +12,7 @@ export default function RestaurantPage() {
  useEffect(() => {
   api.get("/menu")
    .then(res => setMenu(res.data))
+
    .catch(() => setMenu([]))
  }, [])
 
@@ -43,6 +44,15 @@ export default function RestaurantPage() {
    addToLocalCart(item)
   }
 
+ }, [])
+
+ const addToCart = async (item) => {
+  await api.post("/cart", {
+   itemId: item.id,
+   quantity: 1
+  })
+
+
   alert(`${item.name} added to cart`)
  }
 
@@ -53,7 +63,8 @@ export default function RestaurantPage() {
     <button onClick={() => navigate("/hotel/checkout")} className="bg-blue-600 text-white px-4 py-2 rounded">Go to Checkout</button>
    </div>
 
-   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+   <div className="grid grid-cols-3 gap-4">
+
     {menu.map(item => (
      <button
       key={item.id}

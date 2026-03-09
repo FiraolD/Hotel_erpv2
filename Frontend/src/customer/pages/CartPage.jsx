@@ -28,13 +28,11 @@ export default function CartPage() {
    <p className="mb-4 text-gray-600">Total items: {totalItems}</p>
 
    {cart.map((item, index) => (
-    <div key={`${item.itemId}-${index}`} className="mb-2 border-b pb-2">
-     <p>{item.name || `Item #${item.itemId}`} — Qty {item.quantity}</p>
-     {typeof item.price === "number" && <p className="text-sm text-gray-500">${(item.price * item.quantity).toFixed(2)}</p>}
+    <div key={`${item.itemId}-${index}`} className="mb-2">
+     Item #{item.itemId} — Qty {item.quantity}
     </div>
    ))}
 
-   {!cart.length && <p className="text-gray-500">Your cart is empty.</p>}
 
    <button onClick={() => navigate("/hotel/checkout")} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
     Proceed to Checkout
