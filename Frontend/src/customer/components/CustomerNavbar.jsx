@@ -18,6 +18,8 @@ export default function CustomerNavbar() {
 
     <Link to="/hotel/cart">Cart</Link>
 
+    <Link to="/hotel/checkout">Checkout</Link>
+
    </div>
 
   </div>
